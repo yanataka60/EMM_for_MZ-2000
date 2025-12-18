@@ -16,6 +16,8 @@
 
 　5)ジャンパによりEMM0～EMM3のいずれかに設定して使えます。(MZ-2000_SDと併用するときはEMM0としては使えません。EMM1～EMM3として使ってください。)
 
+　6)おまけでアドレスカウンタリセットを付けました。
+
 　なお、MZ-2000_SDと併用した場合のLOAD、SAVEプログラム、EMMボードを使ったパラパラアニメプログラムなどのSAMPLEについては、順次公開する予定です。
 
 ## 回路図
@@ -50,6 +52,8 @@
 |BT1|ボタン電池基板取付用ホルダー CR2032用(小型タイプ)|1|秋月電子通商 CH25-2032LFなど|
 
 注1)DIPで設計しています。SOPを入手した場合にはこちらの変換基板を使うことで装着できます。
+
+https://github.com/yanataka60/SOPtoDIP32
 
 ![SOP2DIP](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/SOP2DIP.JPG)
 
