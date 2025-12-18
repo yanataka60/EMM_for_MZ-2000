@@ -1,4 +1,4 @@
-# EMM for MZ-2000
+# EMMボード for MZ-2000
 
 ![TITLE](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/EMM_MZ-2000.JPG)
 
