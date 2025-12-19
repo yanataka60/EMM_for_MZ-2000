@@ -59,6 +59,12 @@ https://github.com/yanataka60/SOPtoDIP32
 
 ## I/Oポート
 ### EMM0
+ジャンパピンA3、A2とも0の位置にします。
+
+![EMM0](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/EMM0.JPG)
+
+EMM0の設定ではMZ-2000_SDと共存できません。EMM1～EMM3で使ってください。
+
 |アドレス|R/W|説明|
 | ------------ | ------------ | ------------ |
 |A0h|R|アドレスカウンタリセット|
@@ -68,6 +74,10 @@ https://github.com/yanataka60/SOPtoDIP32
 |A3h|R|データ読み出し:アドレスカウンタ+1|
 |A3h|W|データ書き込み:アドレスカウンタ+1|
 ### EMM1
+ジャンパピンA3を0、A2を1の位置にします。
+
+![EMM0](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/EMM1.JPG)
+
 |アドレス|R/W|説明|
 | ------------ | ------------ | ------------ |
 |A4h|R|アドレスカウンタリセット|
@@ -77,6 +87,10 @@ https://github.com/yanataka60/SOPtoDIP32
 |A7h|R|データ読み出し:アドレスカウンタ+1|
 |A7h|W|データ書き込み:アドレスカウンタ+1|
 ### EMM2
+ジャンパピンA3を1、A2を0の位置にします。
+
+![EMM0](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/EMM2.JPG)
+
 |アドレス|R/W|説明|
 | ------------ | ------------ | ------------ |
 |A8h|R|アドレスカウンタリセット|
@@ -86,6 +100,10 @@ https://github.com/yanataka60/SOPtoDIP32
 |ABh|R|データ読み出し:アドレスカウンタ+1|
 |ABh|W|データ書き込み:アドレスカウンタ+1|
 ### EMM3
+ジャンパピンA3、A2とも1の位置にします。
+
+![EMM0](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/EMM3.JPG)
+
 |アドレス|R/W|説明|
 | ------------ | ------------ | ------------ |
 |ACh|R|アドレスカウンタリセット|
