@@ -61,9 +61,9 @@ https://github.com/yanataka60/SOPtoDIP32
 ### EMM0
 ジャンパピンA3、A2とも0の位置にします。
 
-![EMM0](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/EMM0.JPG)
+#### 注)EMM0の設定ではMZ-2000_SDと共存できません。EMM1～EMM3で使ってください。
 
-EMM0の設定ではMZ-2000_SDと共存できません。EMM1～EMM3で使ってください。
+![EMM0](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/EMM0.JPG)
 
 |アドレス|R/W|説明|
 | ------------ | ------------ | ------------ |
