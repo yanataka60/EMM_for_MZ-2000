@@ -41,7 +41,7 @@ http://fukui.s17.xrea.com/retro/mz2080b/emulator.html
 　付加する128Byteのヘッダの内容はどんな内容でも構わないので00hを128Byte等好きにつけてください。
 
 ## EMMSAVEの使い方
-　SAMPLEフォルダ、SDtoEMM,EMMtoSDフォルダ、EMMSAVEフォルダ内のEMM1SAVE.mzt、EMM2SAVE.mzt、EMM3SAVE.mztのいずれかをSDカードにコピーして使ってください。
+　SAMPLEフォルダ、EMMLOAD,EMMSAVEフォルダ、EMMSAVEフォルダ内のEMM1SAVE.mzt、EMM2SAVE.mzt、EMM3SAVE.mztのいずれかをSDカードにコピーして使ってください。
 
 　EMMからSDへの保存にかかる時間は約100秒です。
 
@@ -71,7 +71,7 @@ FD EMM3SAVE[CR]
 
 
 ## EMMLOADの使い方
-　SAMPLEフォルダ、SDtoEMM,EMMtoSDフォルダ、EMMLOADフォルダ内のEMM1LOAD.mzt、EMM2LOAD.mzt、EMM3LOAD.mztのいずれかをSDカードにコピーして使ってください。
+　SAMPLEフォルダ、EMMLOAD,EMMSAVEフォルダ、EMMLOADフォルダ内のEMM1LOAD.mzt、EMM2LOAD.mzt、EMM3LOAD.mztのいずれかをSDカードにコピーして使ってください。
 
 　SDからEMMへの転送にかかる時間は約90秒です。
 
