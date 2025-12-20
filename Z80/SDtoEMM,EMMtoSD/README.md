@@ -41,11 +41,19 @@ http://fukui.s17.xrea.com/retro/mz2080b/emulator.html
 ## EMMSAVEの使い方
 　Z80フォルダ、SDtoEMM,EMMtoSDフォルダ、EMMSAVEフォルダ内のEMM1SAVE.mzt、EMM2SAVE.mzt、EMM3SAVE.mztのいずれかをSDカードにコピーして使ってください。
 
+　EMMからSDへの保存にかかる時間は約100秒です。
+
 　MZ-2000_SDで使うことが前提ですのでEMM0SAVE.mztは存在しません。
 
 　EMMxSAVE.mzt(EMM1SAVE.mzt、EMM2SAVE.mzt、EMM3SAVE.mzt)を起動するとPIO3034-x-SAVE.mzt(PIO3034-1-SAVE.mzt、PIO3034-2-SAVE.mzt、PIO3034-3-SAVE.mzt)というファイルがSDカードに作成されます。
 
 　同名のファイルがあると上書きされます。SDに保存されるファイル名はPIO3034-x-SAVE.mzt(PIO3034-1-SAVE.mzt、PIO3034-2-SAVE.mzt、PIO3034-3-SAVE.mzt)に固定されていて指定はできません。
+
+### 注)私の使っているSDカードの不具合かもしれませんが、EMMSAVEに時々失敗することがあり、失敗するとMZ-2000_SDからSDカードにアクセス不可能になってしまう事象が発生します。
+
+### Windowsからは問題なくアクセスできるのでSDカードのすべての内容を一旦Windowsのフォルダに移動させ、SDカードにファイルが一つもない状態にしてから退避したWindowsのフォルダからファイルを戻すことで復旧できます。
+
+### いずれにしてもSDカードは消耗品ですのでバックアップを怠らないことをお勧めします。
 
 例)
 
@@ -58,6 +66,8 @@ FD EMM3SAVE[CR]
 
 ## EMMLOADの使い方
 　Z80フォルダ、SDtoEMM,EMMtoSDフォルダ、EMMLOADフォルダ内のEMM1LOAD.mzt、EMM2LOAD.mzt、EMM3LOAD.mztのいずれかをSDカードにコピーして使ってください。
+
+　SDからEMMへの転送にかかる時間は約90秒です。
 
 　MZ-2000_SDで使うことが前提ですのでEMM0LOAD.mztは存在しません。
 
