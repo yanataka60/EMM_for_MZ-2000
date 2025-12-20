@@ -48,6 +48,7 @@ http://fukui.s17.xrea.com/retro/mz2080b/emulator.html
 　同名のファイルがあると上書きされます。SDに保存されるファイル名はPIO3034-x-SAVE.mzt(PIO3034-1-SAVE.mzt、PIO3034-2-SAVE.mzt、PIO3034-3-SAVE.mzt)に固定されていて指定はできません。
 
 例)
+
 FD EMM1SAVE[CR]
 
 FD EMM2SAVE[CR]
