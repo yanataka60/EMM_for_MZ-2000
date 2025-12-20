@@ -70,7 +70,7 @@ FD EMM3SAVE[CR]
 　起動したEMM1LOAD.mzt、EMM2LOAD.mzt、EMM3LOAD.mztに対応するPIO3034_x.mzt(PIO3034_1.mzt、PIO3034_2.mzt、PIO3034_3.mzt)をDOSファイル名としてSDカードからEMMに転送します。
 
 ### DOSファイル名を入力して[CR]キー
-　入力されたDOSファイル名のファイルをSDカードからEMMに転送します。
+　入力されたDOSファイル名のファイルをSDカードからEMMに転送します。拡張子の「mzt」は省略可能です。
 
 ### *FDL xxx[CR]キー
 　SDカードに保存されている文字列xxxから始まるDOSファイル名を一覧表示します。xxxを省略した場合はすべてのファイルが一覧表示対象となります。
