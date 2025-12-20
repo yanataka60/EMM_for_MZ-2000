@@ -1,0 +1,90 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.28.0, LST:Full:4
+       00B1                     MONITOR     EQU     00B1H
+       0832                     GETKEY      EQU     0832H
+                                
+       0001                     EMM     EQU     1           ;指定したEMM番号用のEMMLOADを作成
+                                
+                                #if emm == 0                        ;EMM I/Oポート設定
+                                    EMM1        EQU     0A0H
+                                #elif emm == 2
+                                    EMM1        EQU     0A8H
+                                #elif emm == 3
+                                    EMM1        EQU     0ACH
+                                #else
+       00A4                         EMM1        EQU     0A4H
+                                #endif
+                                
+                                
+000000 12A0                             ORG 12A0H
+                                
+       12A0                     START:
+000000 12A0 CDDD12          17          CALL    GCLR
+                                
+000003 12A3 AF               4          XOR A           ;EMMアドレスリセット
+000004 12A4 D3A4            11          OUT (EMM1),A
+000006 12A6 D3A5            11          OUT (EMM1+1),A
+000008 12A8 D3A6            11          OUT (EMM1+2),A
+                                
+00000A 12AA 3E9F             7          LD  A,9FH           ;G-RAMアクセス
+00000C 12AC D3E8            11          OUT (0E8H),A
+                                
+00000E 12AE AF               4          XOR A           ;G-RAM1書き込み、G-RAM1,G-RAM2非表示
+00000F 12AF D3F4            11  ANI1:       OUT (0F4H),A
+000011 12B1 CDCD12          17          CALL    GWRITE
+                                        
+000014 12B4 3E03             7          LD  A,03H           ;G-RAM2書き込み、G-RAM1表示
+000016 12B6 D3F4            11          OUT (0F4H),A
+000018 12B8 CDCD12          17          CALL    GWRITE
+                                        
+00001B 12BB CD3208          17          CALL    GETKEY          ;何かキーが押されていれば終了
+00001E 12BE FE00             7          CP  00H
+000020 12C0 2004            12          JR  NZ,MON
+                                
+000022 12C2 3E04             7          LD  A,04H           ;G-RAM1書き込み、G-RAM2表示
+000024 12C4 18E9            12          JR  ANI1
+                                        
+000026 12C6 3E1F             7  MON:        LD  A,1FH           ;メインメモリに切り替え
+000028 12C8 D3E8            11          OUT (0E8H),A
+00002A 12CA C3B100          10          JP  MONITOR         ;モニターに戻る
+                                
+                                
+       12CD                     GWRITE:
+00002D 12CD 2100E0          10          LD  HL,0E000H       ;G-RAM先頭アドレス
+000030 12D0 110020          10          LD  DE,2000H        ;G-RAMの大きさは1F3FHだが、2000HとしてEMMへの格納簡略化したため
+       12D3                     LOP1:       
+000033 12D3 DBA7            11          IN  A,(EMM1+3)      ;EMMからG-RAMへ1画面分転送
+000035 12D5 77               7          LD  (HL),A
+000036 12D6 23               6          INC HL
+000037 12D7 1B               6          DEC DE
+000038 12D8 7B               4          LD  A,E
+000039 12D9 B2               4          OR  D
+00003A 12DA 20F7            12          JR  NZ,LOP1
+00003C 12DC C9              10          RET
+                                
+                                
+                                
+00003D 12DD 3E9F             7  GCLR:       LD  A,9FH           ;G-RAMアクセス
+00003F 12DF D3E8            11          OUT (0E8H),A
+000041 12E1 0602             7          LD  B,02H
+                                        
+000043 12E3 AF               4          XOR A           ;G-RAM1書き込み、G-RAM非表示
+000044 12E4 D3F4            11  GC1:        OUT (0F4H),A
+000046 12E6 C5              11          PUSH    BC
+                                        
+000047 12E7 2100E0          10          LD  HL,E000H        ;G-RAMクリア
+00004A 12EA 1101E0          10          LD  DE,E001H
+00004D 12ED 013F1F          10          LD  BC,1F3FH
+000050 12F0 3600            10          LD  (HL),00H
+000052 12F2 EDB0                        LDIR
+                                        
+000054 12F4 C1              10          POP BC
+000055 12F5 3C               4          INC A           ;G-RAM2書き込み、G-RAM非表示
+000056 12F6 10EC            13          DJNZ    GC1
+000058 12F8 3E1F             7          LD  A,1FH           ;メインメモリに切り替え
+00005A 12FA D3E8            11          OUT (0E8H),A
+                                        
+00005C 12FC C9              10          RET
+                                        
+                                        END
+                                
+[EOF:EMMANIME80B.s:UTF_8]
