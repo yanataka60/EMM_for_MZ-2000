@@ -1,0 +1,253 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.28.0, LST:Full:4
+       00B1                     MONITOR     EQU     00B1H
+       0832                     GETKEY      EQU     0832H
+       0889                     MSGPR       EQU     0889H
+       08C6                     PRNT        EQU     08C6H
+       0A2E                     LETLN       EQU     0A2EH
+       00A0                     EMM:        EQU     0A0H
+                                
+000000 12A0                             ORG 12A0H
+                                
+000000 12A0 110214          10          LD  DE,TITLE1           ;'******** EMMANIME '表示
+000003 12A3 CD8908          17          CALL    MSGPR
+000006 12A6 CDDC13          17          CALL    MZ
+000009 12A9 3808            12          JR  C,T80B
+00000B 12AB CD6213          17          CALL    GCLR
+00000E 12AE 111514          10          LD  DE,TITLE2000
+000011 12B1 1806            12          JR  MENU
+000013 12B3 CDBC13          17  T80B:       CALL    GCLR2
+000016 12B6 111D14          10          LD  DE,TITLE80B
+000019 12B9 CD8908          17  MENU:       CALL    MSGPR
+00001C 12BC 112414          10          LD  DE,TITLE2           ;' ********'表示
+00001F 12BF CD8908          17          CALL    MSGPR
+                                
+000022 12C2 CD2E0A          17          CALL    LETLN
+000025 12C5 CD2E0A          17  MENU0:      CALL    LETLN
+000028 12C8 112E14          10          LD  DE,EMENU            ;'0)EMM0 1)EMM1 2)EMM2 3)EMM3 4)EXIT?'表示
+00002B 12CB CD8908          17          CALL    MSGPR
+00002E 12CE CD3208          17  EKEY:       CALL    GETKEY              ;1文字入力待ち
+000031 12D1 FE00             7          CP  00H
+000033 12D3 28F9            12          JR  Z,EKEY
+000035 12D5 47               4          LD  B,A
+000036 12D6 FE30             7  EMM0:       CP  '0'             ;EMM0
+000038 12D8 200A            12          JR  NZ,EMM1
+00003A 12DA CDC608          17          CALL    PRNT
+00003D 12DD 3EA0             7          LD  A,0A0H              ;EMM I/Oアドレス A0H
+00003F 12DF CDE713          17          CALL    EMMADRS
+000042 12E2 1837            12          JR  MENUS
+000044 12E4 FE31             7  EMM1:       CP  '1'             ;EMM1
+000046 12E6 200A            12          JR  NZ,EMM2
+000048 12E8 CDC608          17          CALL    PRNT
+00004B 12EB 3EA4             7          LD  A,0A4H              ;EMM I/Oアドレス A4H
+00004D 12ED CDE713          17          CALL    EMMADRS
+000050 12F0 1829            12          JR  MENUS
+000052 12F2 FE32             7  EMM2:       CP  '2'             ;EMM2
+000054 12F4 200A            12          JR  NZ,EMM3
+000056 12F6 CDC608          17          CALL    PRNT
+000059 12F9 3EA8             7          LD  A,0A8H              ;EMM I/Oアドレス A8H
+00005B 12FB CDE713          17          CALL    EMMADRS
+00005E 12FE 181B            12          JR  MENUS
+000060 1300 FE33             7  EMM3:       CP  '3'             ;EMM3
+000062 1302 200A            12          JR  NZ,EMM4
+000064 1304 CDC608          17          CALL    PRNT
+000067 1307 3EAC             7          LD  A,0ACH              ;EMM I/Oアドレス ACH
+000069 1309 CDE713          17          CALL    EMMADRS
+00006C 130C 180D            12          JR  MENUS
+00006E 130E FE34             7  EMM4:       CP  '4'             ;EXIT
+000070 1310 20B3            12          JR  NZ,MENU0
+000072 1312 CDC608          17          CALL    PRNT
+000075 1315 CD2E0A          17          CALL    LETLN
+000078 1318 C3B100          10          JP  MONITOR
+                                
+       131B                     MENUS:
+00007B 131B CDDC13          17          CALL    MZ
+00007E 131E 3863            12          JR  C,MZ80B
+                                
+                                ;***************************** MZ-2000 ************************************
+       1320                     MZ2000:
+000080 1320 CD6213          17          CALL    GCLR
+                                
+000083 1323 CDFA13          17          CALL    EMMRESET
+                                
+000086 1326 3E9F             7          LD  A,9FH           ;G-RAMアクセス
+000088 1328 D3E8            11          OUT (0E8H),A
+                                
+00008A 132A AF               4          XOR A
+00008B 132B D3F6            11          OUT (0F6H),A        ;G-RAM表示なし
+00008D 132D 3C               4          INC A
+00008E 132E D3F7            11  ANI1:       OUT (0F7H),A        ;G-RAM(BLUE)書き込み
+000090 1330 CD5213          17          CALL    GWRITE
+                                        
+000093 1333 3E01             7          LD  A,01H
+000095 1335 D3F6            11          OUT (0F6H),A        ;G-RAM(BLUE)表示
+000097 1337 3C               4          INC A
+000098 1338 D3F7            11          OUT (0F7H),A        ;G-RAM(RED)書き込み
+00009A 133A CD5213          17          CALL    GWRITE
+                                        
+00009D 133D CD3208          17          CALL    GETKEY          ;何かキーが押されていれば終了
+0000A0 1340 FE00             7          CP  00H
+0000A2 1342 2007            12          JR  NZ,MON
+                                
+0000A4 1344 3E02             7          LD  A,02H
+0000A6 1346 D3F6            11          OUT (0F6H),A        ;G-RAM(RED)表示
+0000A8 1348 3D               4          DEC A
+0000A9 1349 18E3            12          JR  ANI1
+                                        
+0000AB 134B 3E5F             7  MON:        LD  A,5FH           ;メインメモリに切り替え
+0000AD 134D D3E8            11          OUT (0E8H),A
+0000AF 134F C3B100          10          JP  MONITOR         ;モニターに戻る
+                                
+                                
+       1352                     GWRITE:
+0000B2 1352 2100C0          10          LD  HL,0C000H       ;G-RAM先頭アドレス
+0000B5 1355 110040          10          LD  DE,4000H        ;G-RAMの大きさは3E7FHだが、4000HとしてEMMへの格納簡略化
+       1358                     LOP1:       
+0000B8 1358 DBA3            11          IN  A,(EMM+3)       ;EMMからG-RAMへ1画面分転送
+0000BA 135A 77               7          LD  (HL),A
+0000BB 135B 23               6          INC HL
+0000BC 135C 1B               6          DEC DE
+0000BD 135D 7B               4          LD  A,E
+0000BE 135E B2               4          OR  D
+0000BF 135F 20F7            12          JR  NZ,LOP1
+0000C1 1361 C9              10          RET
+                                
+                                
+                                
+0000C2 1362 3E9F             7  GCLR:       LD  A,9FH           ;G-RAMアクセス
+0000C4 1364 D3E8            11          OUT (0E8H),A
+0000C6 1366 0603             7          LD  B,03H           ;3画面分繰り返し
+                                        
+0000C8 1368 3E01             7          LD  A,01H
+0000CA 136A D3F7            11  GC1:        OUT (0F7H),A
+0000CC 136C C5              11          PUSH    BC
+                                        
+0000CD 136D 2100C0          10          LD  HL,C000H        ;G-RAMクリア
+0000D0 1370 1101C0          10          LD  DE,C001H
+0000D3 1373 017F3E          10          LD  BC,3E7FH
+0000D6 1376 3600            10          LD  (HL),00H
+0000D8 1378 EDB0                        LDIR
+                                        
+0000DA 137A C1              10          POP BC
+0000DB 137B 3C               4          INC A
+0000DC 137C 10EC            13          DJNZ    GC1
+0000DE 137E 3E5F             7          LD  A,5FH           ;メインメモリに切り替え
+0000E0 1380 D3E8            11          OUT (0E8H),A
+                                        
+0000E2 1382 C9              10          RET
+                                        
+                                ;***************************** MZ80B ********************************
+       1383                     MZ80B:
+0000E3 1383 CDBC13          17          CALL    GCLR2
+0000E6 1386 CDFA13          17          CALL    EMMRESET
+                                
+0000E9 1389 3E9F             7          LD  A,9FH           ;G-RAMアクセス
+0000EB 138B D3E8            11          OUT (0E8H),A
+                                
+0000ED 138D AF               4          XOR A           ;G-RAM1書き込み、G-RAM1,G-RAM2非表示
+0000EE 138E D3F4            11  ANI2:       OUT (0F4H),A
+0000F0 1390 CDAC13          17          CALL    GWRITE2
+                                        
+0000F3 1393 3E03             7          LD  A,03H           ;G-RAM2書き込み、G-RAM1表示
+0000F5 1395 D3F4            11          OUT (0F4H),A
+0000F7 1397 CDAC13          17          CALL    GWRITE2
+                                        
+0000FA 139A CD3208          17          CALL    GETKEY          ;何かキーが押されていれば終了
+0000FD 139D FE00             7          CP  00H
+0000FF 139F 2004            12          JR  NZ,MON2
+                                
+000101 13A1 3E04             7          LD  A,04H           ;G-RAM1書き込み、G-RAM2表示
+000103 13A3 18E9            12          JR  ANI2
+                                        
+000105 13A5 3E1F             7  MON2:       LD  A,1FH           ;メインメモリに切り替え
+000107 13A7 D3E8            11          OUT (0E8H),A
+000109 13A9 C3B100          10          JP  MONITOR         ;モニターに戻る
+                                
+                                
+       13AC                     GWRITE2:
+00010C 13AC 2100E0          10          LD  HL,0E000H       ;G-RAM先頭アドレス
+00010F 13AF 110020          10          LD  DE,2000H        ;G-RAMの大きさは1F3FHだが、2000HとしてEMMへの格納簡略化したため
+       13B2                     LOP2:       
+000112 13B2 DBA3            11          IN  A,(EMM+3)       ;EMMからG-RAMへ1画面分転送
+000114 13B4 77               7          LD  (HL),A
+000115 13B5 23               6          INC HL
+000116 13B6 1B               6          DEC DE
+000117 13B7 7B               4          LD  A,E
+000118 13B8 B2               4          OR  D
+000119 13B9 20F7            12          JR  NZ,LOP2
+00011B 13BB C9              10          RET
+                                
+00011C 13BC 3E9F             7  GCLR2:      LD  A,9FH           ;G-RAMアクセス
+00011E 13BE D3E8            11          OUT (0E8H),A
+000120 13C0 0602             7          LD  B,02H
+                                        
+000122 13C2 AF               4          XOR A           ;G-RAM1書き込み、G-RAM非表示
+000123 13C3 D3F4            11  GC2:        OUT (0F4H),A
+000125 13C5 C5              11          PUSH    BC
+                                        
+000126 13C6 2100E0          10          LD  HL,E000H        ;G-RAMクリア
+000129 13C9 1101E0          10          LD  DE,E001H
+00012C 13CC 013F1F          10          LD  BC,1F3FH
+00012F 13CF 3600            10          LD  (HL),00H
+000131 13D1 EDB0                        LDIR
+                                        
+000133 13D3 C1              10          POP BC
+000134 13D4 3C               4          INC A           ;G-RAM2書き込み、G-RAM非表示
+000135 13D5 10EC            13          DJNZ    GC2
+000137 13D7 3E1F             7          LD  A,1FH           ;メインメモリに切り替え
+000139 13D9 D3E8            11          OUT (0E8H),A
+                                        
+00013B 13DB C9              10          RET
+                                        
+       13DC                     MZ:
+00013C 13DC DBE0            11          IN      A,(0E0H)               ;MZ-2000、MZ-80Bを判別
+00013E 13DE FEFF             7          CP      0FFH
+000140 13E0 C2E513          10          JP      NZ,MZ8
+000143 13E3 AF               4  MZ2:        XOR     A
+000144 13E4 C9              10          RET
+000145 13E5 37               4  MZ8:        SCF
+000146 13E6 C9              10          RET
+                                
+       13E7                     EMMADRS:
+000147 13E7 32FC13          13          LD  (EMMRESET+2),A
+00014A 13EA 3C               4          INC A
+00014B 13EB 32FE13          13          LD  (EMMRESET+4),A
+00014E 13EE 3C               4          INC A
+00014F 13EF 320014          13          LD  (EMMRESET+6),A
+000152 13F2 3C               4          INC A
+000153 13F3 325913          13          LD  (LOP1+1),A
+000156 13F6 32B313          13          LD  (LOP2+1),A
+000159 13F9 C9              10          RET
+                                
+       13FA                     EMMRESET:
+00015A 13FA AF               4          XOR A           ;EMMアドレスリセット
+00015B 13FB D3A0            11          OUT (EMM),A
+00015D 13FD D3A1            11          OUT (EMM+1),A
+00015F 13FF D3A2            11          OUT (EMM+2),A
+000161 1401 C9              10          RET
+                                
+       1402                     TITLE1:
+000162 1402 2A2A2A2A2A2A2A2A            DB  '******** EMMANIME '
+            20454D4D414E494D    
+            4520                
+000174 1414 0D                          DB  0DH
+       1415                     TITLE2000:
+000175 1415 4D5A2D32303030              DB  'MZ-2000'
+00017C 141C 0D                          DB  0DH
+       141D                     TITLE80B:
+00017D 141D 4D5A2D383042                DB  'MZ-80B'
+000183 1423 0D                          DB  0DH
+       1424                     TITLE2:
+000184 1424 202A2A2A2A2A2A2A            DB  ' ********'
+            2A                  
+00018D 142D 0D                          DB  0DH
+                                
+00018E 142E 3029454D4D302031    EMENU:      DB  '0)EMM0 1)EMM1 2)EMM2 3)EMM3 4)EXIT?'
+            29454D4D31203229    
+            454D4D3220332945    
+            4D4D332034294558    
+            49543F              
+0001B1 1451 0D                          DB  0DH
+                                
+                                        END
+                                
+[EOF:EMMANIME.s:UTF_8]
