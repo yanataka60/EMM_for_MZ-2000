@@ -1,0 +1,119 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.28.0, LST:Full:4
+       00B1                     MONITOR     EQU     00B1H
+       0889                     MSGPR       EQU     0889H
+       08C6                     PRNT        EQU     08C6H
+       0A2E                     LETLN       EQU     0A2EH
+       1140                     IBUFE       EQU     1140H
+       1141                     FNAME       EQU     1141H
+       1152                     FSIZE       EQU     1152H
+       1154                     SADRS       EQU     1154H
+       F803                     MSHED       EQU     0F803H
+       F806                     MSDAT       EQU     0F806H
+                                
+       0001                     EMM     EQU     1           ;指定したEMM番号用のEMMLOADを作成
+                                
+                                #if emm == 2                        ;EMM I/Oポート設定
+                                    EMM1        EQU     0A8H
+                                #elif emm == 3
+                                    EMM1        EQU     0ACH
+                                #else
+       00A4                         EMM1        EQU     0A4H
+                                #endif
+                                
+000000 12A0                             ORG 12A0H
+                                
+000000 12A0 AF               4  START:      XOR A               ;EMMアドレスリセット
+000001 12A1 D3A4            11          OUT (EMM1),A
+000003 12A3 D3A5            11          OUT (EMM1+1),A
+000005 12A5 D3A6            11          OUT (EMM1+2),A
+                                
+000007 12A7 3E01             7          LD  A,01H               ;IFBにファイル種別をセット(実は値が何でもOK)
+000009 12A9 324011          13          LD  (IBUFE),A
+00000C 12AC 211013          10          LD  HL,NAME             ;IFBにファイル名をセット(実は値が何でもOK)
+00000F 12AF 114111          10          LD  DE,FNAME
+000012 12B2 011000          10          LD  BC,10H
+000015 12B5 EDB0                        LDIR
+                                        
+000017 12B7 210080          10          LD  HL,8000H            ;IFBにファイル長をセット(実は値が何でもOK)
+00001A 12BA 225211          16          LD  (FSIZE),HL
+00001D 12BD 213C13          10          LD  HL,BUFF             ;IFBにメインメモリ格納先頭アドレスをセット(実は値が何でもOK)
+000020 12C0 225411          16          LD  (SADRS),HL
+                                
+000023 12C3 CD03F8          17          CALL    MSHED               ;ArduinoにIFBを送信、DOSファイルオープン
+                                        
+000026 12C6 210080          10          LD  HL,8000H            ;IFBにファイル長(8000H)をセット
+000029 12C9 225211          16          LD  (FSIZE),HL
+00002C 12CC 213C13          10          LD  HL,BUFF
+00002F 12CF 225411          16          LD  (SADRS),HL          ;IFBにメインメモリ格納先頭アドレス(BUFF)をセット
+000032 12D2 0610             7          LD  B,10H               ;EMMから8000H(32KB)分読み出しを16回繰り返し
+000034 12D4 0E30             7          LD  C,30H               ;ブロック名として0～Fを便宜的に表示
+                                        
+000036 12D6 C5              11  LOP2:       PUSH    BC
+                                
+000037 12D7 E5              11          PUSH    HL
+000038 12D8 D5              11          PUSH    DE
+000039 12D9 CD2E0A          17          CALL    LETLN
+00003C 12DC 79               4          LD  A,C             ;ブロック名としてA～Fを表示するための処理
+00003D 12DD FE3A             7          CP  3AH
+00003F 12DF 3802            12          JR  C,ALPHA
+000041 12E1 C607             7          ADD A,07H
+000043 12E3 CDC608          17  ALPHA:      CALL    PRNT
+000046 12E6 112D13          10          LD  DE,MSG2             ;' BLOCK SAVEING'を表示
+000049 12E9 CD8908          17          CALL    MSGPR
+00004C 12EC D1              10          POP DE
+00004D 12ED E1              10          POP HL
+                                
+00004E 12EE 213C13          10          LD  HL,BUFF
+000051 12F1 110080          10          LD  DE,8000H
+       12F4                     LOP1:       
+000054 12F4 DBA7            11          IN  A,(EMM1+3)          ;EMMから8000H(32KB)分読み出してBUFFへ書き込み
+000056 12F6 77               7          LD  (HL),A
+000057 12F7 23               6          INC HL
+000058 12F8 1B               6          DEC DE
+000059 12F9 7B               4          LD  A,E
+00005A 12FA B2               4          OR  D
+00005B 12FB 20F7            12          JR  NZ,LOP1             ;32KB分ループ
+                                        
+00005D 12FD CD06F8          17          CALL    MSDAT               ;Arduinoへ1ブロックを送信し、SDへ書き込み
+                                
+000060 1300 C1              10          POP BC
+000061 1301 0C               4          INC C
+000062 1302 10D2            13          DJNZ    LOP2                ;16回ループ
+                                        
+000064 1304 CD2E0A          17          CALL    LETLN
+000067 1307 111F13          10          LD  DE,MSG1             ;'EMMx SAVE END'を表示
+00006A 130A CD8908          17          CALL    MSGPR
+00006D 130D C3B100          10          JP  MONITOR             ;終了
+                                
+       1310                     NAME:
+                                
+                                #if emm == 2
+                                        DB  'PIO3034-2-SAVE'
+                                #elif emm == 3
+                                        DB  'PIO3034-3-SAVE'
+                                #else
+000070 1310 50494F333033342D            DB  'PIO3034-1-SAVE'
+            312D53415645        
+                                #endif
+00007E 131E 0D                          DB  0DH
+       131F                     NAME_END:
+                                
+       131F                     MSG1:
+                                #if emm == 2
+                                        DB  'EMM2 SAVE END'
+                                #elif emm == 3
+                                        DB  'EMM3 SAVE END'
+                                #else
+00007F 131F 454D4D3120534156            DB  'EMM1 SAVE END'
+            4520454E44          
+                                #endif
+00008C 132C 0D                          DB  0DH
+                                
+00008D 132D 20424C4F434B2053    MSG2:       DB  ' BLOCK SAVEING'
+            415645494E47        
+00009B 133B 0D                          DB  0DH
+       133C                     BUFF:
+       133C                             DS  8000H
+                                        END
+                                
+[EOF:EMMSAVE.s:UTF_8]
