@@ -113,9 +113,11 @@ https://github.com/yanataka60/SOPtoDIP32
 |AFh|W|データ書き込み:アドレスカウンタ+1|
 
 ## SAMPLEプログラム
-　SAMPLEフォルダ内にEMMANIME、EMMLOAD,EMMSAVEを置きました。
+　SAMPLEフォルダ内にEMMANIME、EMMMENUを置きました。
 
 　使い方については、各フォルダ内のREADME.mdを参照してください。
 
 ## 追記
 2025.12.20 SAMPLEプログラムを追加しました。
+
+2025.12.23 EMMLOAD、EMMSAVEを統合し、EMMMENUとしました。
