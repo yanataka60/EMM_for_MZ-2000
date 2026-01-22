@@ -183,9 +183,9 @@ https://github.com/yanataka60/SOPtoDIP32
 
 　U2 74LS04 10Pinと9Pin
 
-　U2 74LS04 8Pinとダイオード 1S4 カソード
+　U2 74LS04 8Pinとダイオード 1S4 アノード
 
-　ダイオード 1S4 アノードとU13 HM628512 29Pin
+　ダイオード 1S4 カソードとU13 HM628512 29Pin
 
 　U13 HM628512 29Pinと抵抗 10KとU13 HM628512 32Pin
 
