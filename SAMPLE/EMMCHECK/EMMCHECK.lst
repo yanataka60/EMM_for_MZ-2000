@@ -1,0 +1,608 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.28.0, LST:Full:4
+       00B1                     MONITOR     EQU     00B1H
+       05F3                     PRTBYT      EQU     05F3H
+       06A4                     GETL        EQU     06A4H
+       0832                     GETKEY      EQU     0832H
+       0889                     MSGPR       EQU     0889H
+       08C6                     PRNT        EQU     08C6H
+       08C6                     DISPCH      EQU     08C6H
+       08C6                     DPCT        EQU     08C6H
+       0A2E                     LETLN       EQU     0A2EH
+       10AB                     LBUF        EQU     10ABH
+       1140                     IBUFE       EQU     1140H
+       1141                     FNAME       EQU     1141H
+       1152                     FSIZE       EQU     1152H
+       1154                     SADRS       EQU     1154H
+                                
+       00A4                     EMM     EQU     0A4H
+                                
+                                
+                                
+000000 12A0                             ORG 12A0H
+                                
+000000 12A0 11C715          10          LD  DE,TITLE            ;'******** EMMCHECK MENU ********'表示
+000003 12A3 CD8908          17          CALL    MSGPR
+000006 12A6 CD2E0A          17          CALL    LETLN
+000009 12A9 CD2E0A          17  MENU:       CALL    LETLN
+00000C 12AC 11E715          10          LD  DE,EMENU            ;'1)EMM1 2)EMM2 3)EMM3 4)EXIT?'表示
+00000F 12AF CD8908          17          CALL    MSGPR
+000012 12B2 CD3208          17  EKEY:       CALL    GETKEY              ;1文字入力待ち
+000015 12B5 FE00             7          CP  00H
+000017 12B7 28F9            12          JR  Z,EKEY
+000019 12B9 47               4          LD  B,A
+00001A 12BA FE31             7  EMM1:       CP  '1'             ;EMM1
+00001C 12BC 200A            12          JR  NZ,EMM2
+00001E 12BE CDC608          17          CALL    PRNT
+000021 12C1 3EA4             7          LD  A,0A4H              ;EMM I/Oアドレス A4H
+000023 12C3 CDA915          17          CALL    EMMADRS
+000026 12C6 1828            12          JR  MENUS
+000028 12C8 FE32             7  EMM2:       CP  '2'             ;EMM2
+00002A 12CA 200A            12          JR  NZ,EMM3
+00002C 12CC CDC608          17          CALL    PRNT
+00002F 12CF 3EA8             7          LD  A,0A8H              ;EMM I/Oアドレス A8H
+000031 12D1 CDA915          17          CALL    EMMADRS
+000034 12D4 181A            12          JR  MENUS
+000036 12D6 FE33             7  EMM3:       CP  '3'             ;EMM3
+000038 12D8 200A            12          JR  NZ,EMM4
+00003A 12DA CDC608          17          CALL    PRNT
+00003D 12DD 3EAC             7          LD  A,0ACH              ;EMM I/Oアドレス ACH
+00003F 12DF CDA915          17          CALL    EMMADRS
+000042 12E2 180C            12          JR  MENUS
+000044 12E4 FE34             7  EMM4:       CP  '4'             ;EXIT
+000046 12E6 20C1            12          JR  NZ,MENU
+000048 12E8 CDC608          17          CALL    PRNT
+00004B 12EB CD2E0A          17          CALL    LETLN
+00004E 12EE 1812            12          JR  EXIT
+                                        
+                                    
+000050 12F0 78               4  MENUS:      LD  A,B
+000051 12F1 321F16          13          LD  (LNAME+8),A         ;EMM0～EMM3の文字を変更
+000054 12F4 324116          13          LD  (MSG1+3),A
+000057 12F7 322916          13          LD  (SNAME+8),A
+00005A 12FA 326716          13          LD  (MSG4+3),A
+00005D 12FD CD2E0A          17  MS2:        CALL    LETLN
+000060 1300 180C            12          JR  LSTART              ;EMMLOAD
+                                
+000062 1302 CD2E0A          17  EXIT:       CALL    LETLN
+000065 1305 110416          10          LD  DE,ENDMSG           ;'Run Again:[J 12A0]'表示
+000068 1308 CD8908          17          CALL    MSGPR
+00006B 130B C3B100          10          JP  MONITOR
+                                
+       130E                     LSTART:
+00006E 130E 115D16          10          LD  DE,MSG3             ;「FNAME:」を表示する
+000071 1311 CD8908          17          CALL    MSGPR
+000074 1314 11AB10          10          LD  DE,LBUF             ;DOSファイル名を入力
+000077 1317 CDA406          17          CALL    GETL
+00007A 131A 3AAB10          13          LD  A,(LBUF)
+00007D 131D FE0B             7          CP  0BH             ;BREAKキーが押されたらキャンセル
+00007F 131F CA0213          10          JP  Z,EXIT
+000082 1322 11B110          10          LD  DE,LBUF+6           ;DOSファイル名をCHECK
+000085 1325 1A               7          LD  A,(DE)
+000086 1326 FE0D             7  ST1:        CP  0DH             ;入力なしならDefaultの「PIO3034_1」～「PIO3034_3」を採用
+000088 1328 CA7C14          10          JP  Z,ST0
+00008B 132B FE20             7          CP  ' '             ;SPACEは読み飛ばし
+00008D 132D 2003            12          JR  NZ,ST2
+00008F 132F 13               6          INC DE
+000090 1330 18F4            12          JR  ST1
+000092 1332 FE2A             7  ST2:        CP  '*'             ;*が入力されたら「*FDL」処理へ
+000094 1334 280B            12          JR  Z,ST3
+000096 1336 ED53E614        20          LD  (ML0+1),DE          ;DOSファイル名が入力されていたらそちらを採用
+00009A 133A ED538014        20          LD  (ML1+1),DE
+00009E 133E C37C14          10          JP  ST0
+                                
+                                ;**** FDL処理 ****
+       1341                     ST3:
+                                ;**** HL、DE、BCレジスタを保存 ****
+0000A1 1341 E5              11          PUSH    HL
+0000A2 1342 D5              11          PUSH    DE
+0000A3 1343 C5              11          PUSH    BC
+0000A4 1344 13               6          INC DE
+0000A5 1345 0603             7          LD  B,03H
+                                ;**** FDLコマンド ****
+0000A7 1347 217E13          10          LD  HL,CMD1             ;「*FDL」と入力されているかチェック
+0000AA 134A CD6A13          17          CALL    CMPSTR
+0000AD 134D 2805            12          JR  Z,MLHCMD2
+0000AF 134F C1              10          POP BC
+0000B0 1350 D1              10          POP DE
+0000B1 1351 E1              10          POP HL
+                                ;**** DOSファイル名入力へ復帰 ****
+0000B2 1352 18BA            12          JR  LSTART              ;そうでなければ「*FDL」処理を中止
+                                
+       1354                     MLHCMD2:
+0000B4 1354 13               6          INC DE
+0000B5 1355 13               6          INC DE
+0000B6 1356 13               6          INC DE
+0000B7 1357 215D16          10          LD  HL,MSG3             ;行頭に'FNAME:'を付けることでカーソルを移動させリターンで実行できるように
+0000BA 135A 010600          10          LD  BC,MSG3END-MSG3
+                                ;**** FDLコマンド呼び出し ****
+0000BD 135D CD8213          17          CALL    DIRLIST             ;*FDLの後に入力された文字列から始まるファイル名を一覧表示
+0000C0 1360 A7               4          AND A               ;00以外ならERROR
+0000C1 1361 C20C14          10          JP  NZ,SERR
+0000C4 1364 C1              10          POP BC
+0000C5 1365 D1              10          POP DE
+0000C6 1366 E1              10          POP HL
+                                ;**** DOSファイル名入力へ復帰 ****
+0000C7 1367 C30E13          10          JP  LSTART
+                                
+                                ;**** コマンド文字列比較 ****
+       136A                     CMPSTR:
+0000CA 136A C5              11          PUSH    BC
+0000CB 136B D5              11          PUSH    DE
+0000CC 136C 1A               7  CMP1:   LD      A,(DE)
+0000CD 136D BE               7          CP      (HL)
+0000CE 136E 200B            12          JR      NZ,CMP2
+0000D0 1370 05               4          DEC     B
+0000D1 1371 2808            12          JR      Z,CMP2
+0000D3 1373 FE0D             7          CP      0Dh
+0000D5 1375 2804            12          JR      Z,CMP2
+0000D7 1377 13               6          INC     DE
+0000D8 1378 23               6          INC     HL
+0000D9 1379 18F1            12          JR      CMP1
+0000DB 137B D1              10  CMP2:   POP     DE
+0000DC 137C C1              10          POP     BC
+0000DD 137D C9              10          RET
+                                
+                                ;**** コマンドリスト ****
+                                ; 将来拡張用
+0000DE 137E 46444C0D            CMD1:   DB      'FDL',0DH
+                                
+                                ;**** DIRLIST本体 (HL=行頭に付加する文字列の先頭アドレス BC=行頭に付加する文字列の長さ) ****
+                                ;****              戻り値 A=エラーコード ****
+       1382                     DIRLIST:
+0000E2 1382 3E83             7          LD      A,83H      ;DIRLISTコマンド83Hを送信
+0000E4 1384 CD3014          17          CALL    STCD       ;コマンドコード送信
+0000E7 1387 A7               4          AND     A          ;00以外ならERROR
+0000E8 1388 C20B14          10          JP      NZ,DLRET
+                                        
+0000EB 138B C5              11          PUSH    BC
+0000EC 138C 0621             7          LD      B,21H
+0000EE 138E 1A               7  STLT1:  LD      A,(DE)
+0000EF 138F FE0D             7          CP      0DH
+0000F1 1391 2002            12          JR      NZ,STLT2
+0000F3 1393 3E00             7          LD      A,00H
+0000F5 1395 CD7115          17  STLT2:  CALL    SNDBYTE           ;ページ指示を送信
+0000F8 1398 13               6          INC     DE
+0000F9 1399 05               4          DEC     B
+0000FA 139A 20F2            12          JR      NZ,STLT1
+0000FC 139C C1              10          POP     BC
+       139D                     DL1:
+0000FD 139D E5              11          PUSH    HL
+0000FE 139E C5              11          PUSH    BC
+0000FF 139F 11AB10          10          LD      DE,LBUF
+000102 13A2 EDB0                        LDIR
+000104 13A4 EB               4          EX      DE,HL
+000105 13A5 CD5E15          17  DL2:    CALL    RCVBYTE           ;'00H'を受信するまでを一行とする
+000108 13A8 FE00             7          CP      00H
+00010A 13AA 280C            12          JR      Z,DL3
+00010C 13AC FEFF             7          CP      0FFH              ;'0FFH'を受信したら終了
+00010E 13AE 2815            12          JR      Z,DL4
+000110 13B0 FEFE             7          CP      0FEH              ;'0FEH'を受信したら一時停止して一文字入力待ち
+000112 13B2 2818            12          JR      Z,DL5
+000114 13B4 77               7          LD      (HL),A
+000115 13B5 23               6          INC     HL
+000116 13B6 18ED            12          JR      DL2
+000118 13B8 11AB10          10  DL3:    LD      DE,LBUF           ;'00H'を受信したら一行分を表示して改行
+00011B 13BB CD8908          17          CALL    MSGPR
+00011E 13BE CD2E0A          17          CALL    LETLN
+000121 13C1 C1              10          POP     BC
+000122 13C2 E1              10          POP     HL
+000123 13C3 18D8            12          JR      DL1
+000125 13C5 CD5E15          17  DL4:    CALL    RCVBYTE           ;状態取得(00H=OK)
+000128 13C8 C1              10          POP     BC
+000129 13C9 E1              10          POP     HL
+00012A 13CA 183F            12          JR      DLRET
+                                
+00012C 13CC 117616          10  DL5:    LD      DE,MSG_KEY1        ;HIT ANT KEY表示
+00012F 13CF CD8908          17          CALL    MSGPR
+000132 13D2 3E82             7          LD      A,82H
+000134 13D4 CDC608          17          CALL    DISPCH
+000137 13D7 118D16          10          LD      DE,MSG_KEY2        ;HIT ANT KEY表示
+00013A 13DA CD8908          17          CALL    MSGPR
+00013D 13DD CD2E0A          17          CALL    LETLN
+000140 13E0 CD3208          17  DL6:    CALL    GETKEY            ;1文字入力待ち
+000143 13E3 FE00             7          CP      00H
+000145 13E5 28F9            12          JR      Z,DL6
+000147 13E7 FE0B             7          CP      0BH               ;SHIFT+BREAKで打ち切り
+000149 13E9 2816            12          JR      Z,DL7
+00014B 13EB FE02             7          CP      02H               ;カーソル↑で打ち切り
+00014D 13ED 2808            12          JR      Z,DL9
+00014F 13EF FE42             7          CP      42H               ;「B」で前ページ
+000151 13F1 2810            12          JR      Z,DL8
+000153 13F3 3E00             7          LD      A,00H             ;それ以外で継続
+000155 13F5 180C            12          JR      DL8
+000157 13F7 3E02             7  DL9:    LD      A,02H            ;カーソル↑で打ち切ったときにカーソル2行上へ
+000159 13F9 CDC608          17          CALL    DPCT
+00015C 13FC 3E02             7          LD      A,02H
+00015E 13FE CDC608          17          CALL    DPCT
+000161 1401 3EFF             7  DL7:    LD      A,0FFH            ;0FFH中断コードを送信
+000163 1403 CD7115          17  DL8:    CALL    SNDBYTE
+000166 1406 CD2E0A          17          CALL    LETLN
+000169 1409 189A            12          JR      DL2
+                                        
+       140B                     DLRET:      
+00016B 140B C9              10          RET
+                                        
+                                ;******* アプリケーション内SD-CARD操作処理用ERROR処理 **************
+       140C                     SERR:
+00016C 140C FEF0             7          CP  0F0H
+00016E 140E 2005            12          JR  NZ,SERR3
+000170 1410 119D16          10          LD  DE,MSG_F0
+000173 1413 180F            12          JR  SERRMSG
+                                        
+000175 1415 FEF1             7  SERR3:  CP      0F1H
+000177 1417 2005            12          JR  NZ,SERR99
+000179 1419 11B616          10          LD  DE,MSG_F1
+00017C 141C 1806            12          JR  SERRMSG
+                                        
+00017E 141E CDF305          17  SERR99: CALL    PRTBYT
+000181 1421 11C416          10          LD  DE,MSG99
+                                        
+       1424                     SERRMSG:
+000184 1424 CD8908          17          CALL    MSGPR
+000187 1427 CD2E0A          17          CALL    LETLN
+00018A 142A C1              10          POP BC
+00018B 142B D1              10          POP DE
+00018C 142C E1              10          POP HL
+                                ;**** DOSファイル名入力へ復帰 ****
+00018D 142D C30E13          10          JP  LSTART
+                                
+                                ;**** コマンド送信 (IN:A コマンドコード)****
+000190 1430 CD7115          17  STCD:   CALL    SNDBYTE    ;Aレジスタのコマンドコードを送信
+000193 1433 CD5E15          17          CALL    RCVBYTE    ;状態取得(00H=OK)
+000196 1436 C9              10          RET
+                                
+                                ;**************************** 04F8H MONITOR リード データ代替処理 ********************
+       1437                     MLDAT:
+000197 1437 D5              11          PUSH    DE
+000198 1438 C5              11          PUSH    BC
+000199 1439 E5              11          PUSH    HL
+00019A 143A 3E94             7          LD      A,94H      ;DATA LOADコマンド94H
+00019C 143C CD2D15          17          CALL    MCMD       ;コマンドコード送信
+00019F 143F A7               4          AND     A          ;00以外ならERROR
+0001A0 1440 C23915          10          JP      NZ,MERR
+                                
+0001A3 1443 CD5E15          17          CALL    RCVBYTE    ;状態取得(00H=OK)
+0001A6 1446 A7               4          AND     A          ;00以外ならERROR
+0001A7 1447 C23915          10          JP      NZ,MERR
+                                
+0001AA 144A CD5E15          17          CALL    RCVBYTE    ;状態取得(00H=OK)
+0001AD 144D A7               4          AND     A          ;00以外ならERROR
+0001AE 144E C23915          10          JP      NZ,MERR
+                                
+0001B1 1451 115211          10          LD      DE,FSIZE   ;FSIZE送信
+0001B4 1454 1A               7          LD      A,(DE)
+0001B5 1455 CD7115          17          CALL    SNDBYTE
+0001B8 1458 13               6          INC     DE
+0001B9 1459 1A               7          LD      A,(DE)
+0001BA 145A CD7115          17          CALL    SNDBYTE
+0001BD 145D CD6A14          17          CALL    DBRCV2      ;FSIZE分のデータを受信し、SADRSから格納。分割ロードの場合、直前に0436HでOPENされたファイルを対象として256バイトずつSADRSが加算されて04F8HがCALLされる。
+                                
+0001C0 1460 CD5E15          17          CALL    RCVBYTE    ;状態取得(00H=OK)
+0001C3 1463 A7               4          AND     A          ;00以外ならERROR
+0001C4 1464 C23915          10          JP      NZ,MERR
+                                
+0001C7 1467 C33415          10          JP      MRET       ;正常RETURN
+                                
+                                ;データ受信2
+0001CA 146A ED5B5211        20  DBRCV2: LD      DE,(FSIZE)
+0001CE 146E 2A5411          16          LD      HL,(SADRS)
+0001D1 1471 CD5E15          17  DBRLP2: CALL    RCVBYTE
+0001D4 1474 77               7          LD      (HL),A
+0001D5 1475 1B               6          DEC     DE
+0001D6 1476 7A               4          LD      A,D
+0001D7 1477 B3               4          OR      E
+0001D8 1478 23               6          INC     HL
+0001D9 1479 20F6            12          JR      NZ,DBRLP2   ;DE=0までLOOP
+0001DB 147B C9              10          RET
+                                
+                                ;********************************** EMMCHECK処理本体 ************************************
+0001DC 147C CD2E0A          17  ST0:        CALL    LETLN
+0001DF 147F 111716          10  ML1:        LD  DE,LNAME                ;DOSファイル名表示
+0001E2 1482 CD8908          17          CALL    MSGPR
+0001E5 1485 113016          10          LD  DE,MSG0             ;' CHECK START!'表示
+0001E8 1488 CD8908          17          CALL    MSGPR
+                                
+0001EB 148B CDA115          17          CALL    EMMRESET
+                                
+0001EE 148E CDE214          17          CALL    MLHED               ;DOSファイル名をArduinoに送信してファイルオープン
+0001F1 1491 DA0213          10          JP  C,EXIT              ;DOSファイル名のファイルが存在しない等のエラーがあれば中止
+                                        
+0001F4 1494 210080          10          LD  HL,8000H            ;IFBにファイル長(8000H)をセット
+0001F7 1497 225211          16          LD  (FSIZE),HL
+0001FA 149A 21CB16          10          LD  HL,BUFF
+0001FD 149D 225411          16          LD  (SADRS),HL          ;IFBにメインメモリ格納先頭アドレス(BUFF)をセット
+000200 14A0 0610             7          LD  B,10H               ;SDからのLOADを8000H(32KB)を16回繰り返し
+000202 14A2 0E30             7          LD  C,30H               ;ブロック名として0～Fを便宜的に表示
+                                        
+000204 14A4 C5              11  LOP2:       PUSH    BC
+000205 14A5 E5              11          PUSH    HL
+000206 14A6 D5              11          PUSH    DE
+000207 14A7 CDB915          17          CALL    BPRINT
+00020A 14AA 114D16          10          LD  DE,MSG2             ;' BLOCK CHECKING'を表示
+00020D 14AD CD8908          17          CALL    MSGPR
+000210 14B0 D1              10          POP DE
+000211 14B1 E1              10          POP HL
+                                
+000212 14B2 CD3714          17          CALL    MLDAT               ;Arduinoから1ブロックを読み込み
+                                        
+000215 14B5 21CB16          10          LD  HL,BUFF
+000218 14B8 110080          10          LD  DE,8000H
+       14BB                     LOP1:       
+00021B 14BB DBA7            11  ML3:    IN  A,(EMM+3)           ;BUFFから8000H(32KB)を1Byteずつ読み込み、EMMへ書き込み
+00021D 14BD BE               7          CP  (HL)
+00021E 14BE 2016            12          JR  NZ,CHECKERR
+000220 14C0 23               6          INC HL
+000221 14C1 1B               6          DEC DE
+000222 14C2 7B               4          LD  A,E
+000223 14C3 B2               4          OR  D
+000224 14C4 20F5            12          JR  NZ,LOP1             ;32KB分ループ
+                                
+000226 14C6 C1              10          POP BC
+000227 14C7 0C               4          INC C
+000228 14C8 10DA            13          DJNZ    LOP2                ;16回ループ
+                                        
+00022A 14CA CD2E0A          17          CALL    LETLN
+00022D 14CD 113E16          10          LD  DE,MSG1             ;'EMMx CHECK END'を表示
+000230 14D0 CD8908          17          CALL    MSGPR
+000233 14D3 C30213          10          JP  EXIT                ;終了
+                                
+       14D6                     CHECKERR:
+000236 14D6 CD2E0A          17          CALL    LETLN
+000239 14D9 116416          10          LD  DE,MSG4             ;'EMMx CHECK ERROR!'を表示
+00023C 14DC CD8908          17          CALL    MSGPR
+00023F 14DF C30213          10          JP  EXIT                ;終了
+                                
+                                ;************************ セットされたDOSファイル名でファイルオープンするためのMLHED処理 **************
+000242 14E2 D5              11  MLHED:      PUSH    DE
+000243 14E3 C5              11          PUSH    BC
+000244 14E4 E5              11          PUSH    HL
+000245 14E5 111716          10  ML0:        LD  DE,LNAME
+                                
+000248 14E8 3E93             7          LD      A,93H      ;HEADER LOADコマンド93H
+00024A 14EA CD2D15          17          CALL    MCMD       ;コマンドコード送信
+00024D 14ED A7               4          AND     A          ;00以外ならERROR
+00024E 14EE C23915          10          JP      NZ,MERR
+                                
+       14F1                     MLH1:
+000251 14F1 1A               7          LD      A,(DE)
+000252 14F2 FE20             7          CP      20H                 ;行頭のスペースをファイルネームまで読み飛ばし
+000254 14F4 2003            12          JR      NZ,MLH2
+000256 14F6 13               6          INC     DE
+000257 14F7 18F8            12          JR      MLH1
+                                
+000259 14F9 0620             7  MLH2:   LD      B,20H
+00025B 14FB 1A               7  MLH4:   LD      A,(DE)     ;FNAME送信
+00025C 14FC CD7115          17          CALL    SNDBYTE
+00025F 14FF 13               6          INC     DE
+000260 1500 05               4          DEC     B
+000261 1501 20F8            12          JR      NZ,MLH4
+000263 1503 3E0D             7          LD      A,0DH
+000265 1505 CD7115          17          CALL    SNDBYTE
+                                        
+000268 1508 CD5E15          17          CALL    RCVBYTE    ;状態取得(00H=OK)
+00026B 150B A7               4          AND     A          ;00以外ならERROR
+00026C 150C C23915          10          JP      NZ,MERR
+                                
+00026F 150F CD5E15          17          CALL    RCVBYTE    ;状態取得(00H=OK)
+000272 1512 A7               4          AND     A          ;00以外ならERROR
+000273 1513 C23915          10          JP      NZ,MERR
+                                
+000276 1516 214011          10          LD      HL,IBUFE
+000279 1519 0680             7          LD      B,80H
+00027B 151B CD5E15          17  MLH5:   CALL    RCVBYTE    ;読みだされたインフォメーションブロックを受信
+00027E 151E 77               7          LD      (HL),A
+00027F 151F 23               6          INC     HL
+000280 1520 05               4          DEC     B
+000281 1521 20F8            12          JR      NZ,MLH5
+                                
+000283 1523 CD5E15          17          CALL    RCVBYTE    ;状態取得(00H=OK)
+000286 1526 A7               4          AND     A          ;00以外ならERROR
+000287 1527 C23915          10          JP      NZ,MERR
+                                
+00028A 152A C33415          10          JP      MRET       ;正常RETURN
+                                
+                                ;******* 代替処理用コマンドコード送信 (IN:A コマンドコード) **********
+       152D                     MCMD:
+00028D 152D CD7115          17          CALL    SNDBYTE    ;コマンドコード送信
+000290 1530 CD5E15          17          CALL    RCVBYTE    ;状態取得(00H=OK)
+000293 1533 C9              10          RET
+                                
+                                ;****** 代替処理用正常RETURN処理 **********
+000294 1534 E1              10  MRET:   POP     HL
+000295 1535 C1              10          POP     BC
+000296 1536 D1              10          POP     DE
+000297 1537 AF               4          XOR     A          ;正常終了フラグ
+                                        
+000298 1538 C9              10          RET
+                                
+                                ;******* 代替処理用ERROR処理 **************
+       1539                     MERR:
+000299 1539 FEF0             7          CP      0F0H
+00029B 153B 2005            12          JR      NZ,MERR3
+00029D 153D 119D16          10          LD      DE,MSG_F0
+0002A0 1540 180F            12          JR      MERRMSG
+                                        
+0002A2 1542 FEF1             7  MERR3:  CP      0F1H
+0002A4 1544 2005            12          JR      NZ,MERR99
+0002A6 1546 11B616          10          LD      DE,MSG_F1
+0002A9 1549 1806            12          JR      MERRMSG
+                                        
+0002AB 154B CDF305          17  MERR99: CALL    PRTBYT
+0002AE 154E 11C416          10          LD      DE,MSG99
+                                        
+       1551                     MERRMSG:
+0002B1 1551 CD8908          17          CALL    MSGPR
+0002B4 1554 CD2E0A          17          CALL    LETLN
+0002B7 1557 E1              10          POP     HL
+0002B8 1558 C1              10          POP     BC
+0002B9 1559 D1              10          POP     DE
+0002BA 155A 3E02             7          LD      A,02H
+0002BC 155C 37               4          SCF
+                                
+0002BD 155D C9              10          RET
+                                
+                                ;**** 1BYTE受信 ****
+                                ;受信DATAをAレジスタにセットしてリターン
+       155E                     RCVBYTE:
+0002BE 155E CD9315          17          CALL    F1CHK      ;PORTC BIT7が1になるまでLOOP
+0002C1 1561 DBA1            11          IN      A,(0A1H)   ;PORTB -> A
+0002C3 1563 F5              11          PUSH    AF
+0002C4 1564 3E05             7          LD      A,05H
+0002C6 1566 D3A3            11          OUT     (0A3H),A    ;PORTC BIT2 <- 1
+0002C8 1568 CD9A15          17          CALL    F2CHK      ;PORTC BIT7が0になるまでLOOP
+0002CB 156B 3E04             7          LD      A,04H
+0002CD 156D D3A3            11          OUT     (0A3H),A    ;PORTC BIT2 <- 0
+0002CF 156F F1              10          POP     AF
+0002D0 1570 C9              10          RET
+                                        
+                                ;**** 1BYTE送信 ****
+                                ;Aレジスタの内容をPORTA下位4BITに4BITずつ送信
+       1571                     SNDBYTE:
+0002D1 1571 F5              11          PUSH    AF
+0002D2 1572 1F               4          RRA
+0002D3 1573 1F               4          RRA
+0002D4 1574 1F               4          RRA
+0002D5 1575 1F               4          RRA
+0002D6 1576 E60F             7          AND     0FH
+0002D8 1578 CD8215          17          CALL    SND4BIT
+0002DB 157B F1              10          POP     AF
+0002DC 157C E60F             7          AND     0FH
+0002DE 157E CD8215          17          CALL    SND4BIT
+0002E1 1581 C9              10          RET
+                                
+                                ;**** 4BIT送信 ****
+                                ;Aレジスタ下位4ビットを送信する
+       1582                     SND4BIT:
+0002E2 1582 D3A0            11          OUT     (0A0H),A
+0002E4 1584 3E05             7          LD      A,05H
+0002E6 1586 D3A3            11          OUT     (0A3H),A    ;PORTC BIT2 <- 1
+0002E8 1588 CD9315          17          CALL    F1CHK      ;PORTC BIT7が1になるまでLOOP
+0002EB 158B 3E04             7          LD      A,04H
+0002ED 158D D3A3            11          OUT     (0A3H),A    ;PORTC BIT2 <- 0
+0002EF 158F CD9A15          17          CALL    F2CHK
+0002F2 1592 C9              10          RET
+                                        
+                                ;**** BUSYをCHECK(1) ****
+                                ; 82H BIT7が1になるまでLOP
+0002F3 1593 DBA2            11  F1CHK:  IN      A,(0A2H)
+0002F5 1595 E680             7          AND     80H        ;PORTC BIT7 = 1?
+0002F7 1597 28FA            12          JR      Z,F1CHK
+0002F9 1599 C9              10          RET
+                                
+                                ;**** BUSYをCHECK(0) ****
+                                ; 82H BIT7が0になるまでLOOP
+0002FA 159A DBA2            11  F2CHK:  IN      A,(0A2H)
+0002FC 159C E680             7          AND     80H        ;PORTC BIT7 = 0?
+0002FE 159E 20FA            12          JR      NZ,F2CHK
+000300 15A0 C9              10          RET
+                                
+       15A1                     EMMRESET:
+000301 15A1 AF               4          XOR A               ;EMMアドレスリセット
+000302 15A2 D3A4            11  ML2:        OUT (EMM),A
+000304 15A4 D3A5            11          OUT (EMM+1),A
+000306 15A6 D3A6            11          OUT (EMM+2),A
+000308 15A8 C9              10          RET
+                                
+       15A9                     EMMADRS:
+000309 15A9 32A315          13          LD  (ML2+1),A
+00030C 15AC 3C               4          INC A
+00030D 15AD 32A515          13          LD  (ML2+3),A
+000310 15B0 3C               4          INC A
+000311 15B1 32A715          13          LD  (ML2+5),A
+000314 15B4 3C               4          INC A
+000315 15B5 32BC14          13          LD  (ML3+1),A
+000318 15B8 C9              10          RET
+                                
+       15B9                     BPRINT:
+000319 15B9 CD2E0A          17          CALL    LETLN
+00031C 15BC 79               4          LD  A,C             ;ブロック名としてA～Fを表示するための処理
+00031D 15BD FE3A             7          CP  3AH
+00031F 15BF 3802            12          JR  C,ALPHA
+000321 15C1 C607             7          ADD A,07H
+000323 15C3 CDC608          17  ALPHA:      CALL    PRNT
+000326 15C6 C9              10          RET
+                                
+       15C7                     TITLE:
+000327 15C7 2A2A2A2A2A2A2A2A            DB  '******** EMMCHECK MENU ********'
+            20454D4D43484543    
+            4B204D454E55202A    
+            2A2A2A2A2A2A2A      
+000346 15E6 0D                          DB  0DH
+                                
+000347 15E7 3129454D4D312032    EMENU:      DB  '1)EMM1 2)EMM2 3)EMM3 4)EXIT?'
+            29454D4D32203329    
+            454D4D3320342945    
+            5849543F            
+000363 1603 0D                          DB  0DH
+                                
+000364 1604 52756E2041676169    ENDMSG:     DB  'Run Again:[J 12A0]'
+            6E3A5B4A20313241    
+            305D                
+000376 1616 0D                          DB  0DH
+                                
+       1617                     LNAME:
+000377 1617 50494F333033345F            DB  'PIO3034_1'
+            31                  
+000380 1620 0D                          DB  0DH
+       1621                     NAME_END:
+                                
+       1621                     SNAME:
+000381 1621 50494F333033342D            DB  'PIO3034-1-SAVE'
+            312D53415645        
+00038F 162F 0D                          DB  0DH
+       1630                     SNAME_END:
+                                
+                                
+000390 1630 20434845434B2053    MSG0:       DB  ' CHECK START!'
+            5441525421          
+00039D 163D 0D                          DB  0DH
+                                
+       163E                     MSG1:
+00039E 163E 454D4D3120434845            DB  'EMM1 CHECK END'
+            434B20454E44        
+0003AC 164C 0D                          DB  0DH
+                                
+0003AD 164D 20424C4F434B2043    MSG2:       DB  ' BLOCK CHECKING'
+            4845434B494E47      
+0003BC 165C 0D                          DB  0DH
+                                        
+0003BD 165D 464E414D453A        MSG3:       DB  'FNAME:'
+       1663                     MSG3END:
+0003C3 1663 0D                          DB  0DH
+                                
+       1664                     MSG4:
+0003C4 1664 454D4D3120434845            DB  'EMM1 CHECK ERROR!'
+            434B204552524F52    
+            21                  
+0003D5 1675 0D                          DB  0DH
+                                
+       1676                     MSG_KEY1:
+0003D6 1676 4E4558543A414E59            DB      'NEXT:ANY BACK:B BREAK:'
+            204241434B3A4220    
+            425245414B3A        
+0003EC 168C 0D                          DB      0DH
+       168D                     MSG_KEY2:
+0003ED 168D 204F522053484946            DB      ' OR SHIFT+BREAK'
+            542B425245414B      
+0003FC 169C 0D                          DB      0DH
+                                        
+       169D                     MSG_F0:
+0003FD 169D 53442D4341524420            DB  'SD-CARD INITIALIZE ERROR'
+            494E495449414C49    
+            5A45204552524F52    
+000415 16B5 0D                          DB  0DH
+                                        
+       16B6                     MSG_F1:
+000416 16B6 4E4F542046494E44            DB  'NOT FIND FILE'
+            2046494C45          
+000423 16C3 0D                          DB  0DH
+                                        
+       16C4                     MSG99:
+000424 16C4 204552524F52                DB  ' ERROR'
+00042A 16CA 0D                          DB  0DH
+                                        
+       16CB                     BUFF:
+       16CB                             DS  8000H
+                                        END
+                                
+[EOF:EMMCHECK.s:UTF_8]
