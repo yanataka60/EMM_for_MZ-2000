@@ -146,7 +146,7 @@ https://github.com/yanataka60/SOPtoDIP32
 ![cut2](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/emm_CUT(2).JPG)
 
 ハンダ面全体
-![cut3](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/emm_CUT(3).JPG)
+![cut3](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/emm_CUT(3).jpg)
 
 ハンダ面拡大1
 ![cut4](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/emm_CUT(4).JPG)
