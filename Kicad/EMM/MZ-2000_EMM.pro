@@ -1,4 +1,4 @@
-update=2025/12/18 14:47:55
+update=2026/01/22 15:21:25
 version=1
 last_client=kicad
 [general]
@@ -15,7 +15,7 @@ LibDir=
 [pcbnew]
 version=1
 PageLayoutDescrFile=
-LastNetListRead=MZ-2000_EMM_CMU.net
+LastNetListRead=MZ-2000_EMM.net
 CopperLayerCount=2
 BoardThickness=1.6
 AllowMicroVias=0
