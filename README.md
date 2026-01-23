@@ -80,7 +80,7 @@ https://github.com/yanataka60/SOPtoDIP32
 ### EMM1
 ジャンパピンA3を0、A2を1の位置にします。
 
-![EMM0](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/EMM1.JPG)
+![EMM1](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/EMM1.JPG)
 
 |アドレス|R/W|説明|
 | ------------ | ------------ | ------------ |
@@ -93,7 +93,7 @@ https://github.com/yanataka60/SOPtoDIP32
 ### EMM2
 ジャンパピンA3を1、A2を0の位置にします。
 
-![EMM0](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/EMM2.JPG)
+![EMM2](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/EMM2.JPG)
 
 |アドレス|R/W|説明|
 | ------------ | ------------ | ------------ |
@@ -106,7 +106,7 @@ https://github.com/yanataka60/SOPtoDIP32
 ### EMM3
 ジャンパピンA3、A2とも1の位置にします。
 
-![EMM0](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/EMM3.JPG)
+![EMM3](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/EMM3.JPG)
 
 |アドレス|R/W|説明|
 | ------------ | ------------ | ------------ |
@@ -190,13 +190,13 @@ https://github.com/yanataka60/SOPtoDIP32
 　U13 HM628512 29Pinと抵抗 10KとU13 HM628512 32Pin
 
 ハンダ面全体
-![cut1](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/jumper(1).JPG)
+![jumper1](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/jumper(1).JPG)
 
 ハンダ面拡大1
-![cut2](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/jumper(2).JPG)
+![jumper2](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/jumper(2).JPG)
 
 ハンダ面拡大2
-![cut3](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/jumper(3).JPG)
+![jumper3](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/jumper(3).JPG)
 
 ## 追記
 2025.12.20 SAMPLEプログラムを追加しました。
