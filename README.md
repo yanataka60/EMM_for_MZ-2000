@@ -134,7 +134,7 @@ https://github.com/yanataka60/SOPtoDIP32
 
 　U13 HM628512の29PinとU14 74LS11 13Pinとの接続をカットします。
 
-　U13 HM628512の22、24Pin、R2 10Kとの接続点とU12 74LS138 5Pinとの接続をカットします。
+　U13 HM628512の22、24Pin、R2 抵抗 10Kとの接続点とU12 74LS138 5Pinとの接続をカットします。
 
 部品面全体
 ![cut0](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/emm_CUT(0).JPG)
