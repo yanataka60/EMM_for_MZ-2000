@@ -132,9 +132,9 @@ https://github.com/yanataka60/SOPtoDIP32
 ### EMM基板パターンカット個所
 　U2 74LS04の3Pin、5Pin、9Pin、11PinをGNDから切り離します。
 
-　HM628512の29PinとU12 74LS138 12Pinとの接続をカットします。
+　U13 HM628512の29PinとU12 74LS138 12Pinとの接続をカットします。
 
-　HM628512の22、24Pin、R2 10Kとの接続点とU5 74LS30 8Pinとの接続をカットします。
+　U13 HM628512の22、24Pin、R2 10Kとの接続点とU5 74LS30 8Pinとの接続をカットします。
 
 部品面全体
 ![cut0](https://github.com/yanataka60/EMM_for_MZ-2000/blob/main/JPEG/emm_CUT(0).JPG)
