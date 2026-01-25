@@ -1472,7 +1472,7 @@ P 16250 7200
 AR Path="/6921BBA5/692BBABE" Ref="D?"  Part="1" 
 AR Path="/692BBABE" Ref="D2"  Part="1" 
 F 0 "D2" H 16250 7417 50  0000 C CNN
-F 1 "1S4" H 16250 7326 50  0000 C CNN
+F 1 "1N4148" H 16250 7326 50  0000 C CNN
 F 2 "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal" H 16250 7025 50  0001 C CNN
 F 3 "http://www.vishay.com/docs/88503/1n4001.pdf" H 16250 7200 50  0001 C CNN
 	1    16250 7200
@@ -1489,7 +1489,7 @@ P 15250 7250
 AR Path="/6921BBA5/692BBAC9" Ref="D?"  Part="1" 
 AR Path="/692BBAC9" Ref="D1"  Part="1" 
 F 0 "D1" H 15250 7467 50  0000 C CNN
-F 1 "1S4" H 15250 7376 50  0000 C CNN
+F 1 "1N4148" H 15250 7376 50  0000 C CNN
 F 2 "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal" H 15250 7075 50  0001 C CNN
 F 3 "http://www.vishay.com/docs/88503/1n4001.pdf" H 15250 7250 50  0001 C CNN
 	1    15250 7250
@@ -2340,7 +2340,6 @@ F 3 "" H 13100 2900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Connection ~ 13100 2900
-NoConn ~ 14600 9500
 $Comp
 L 74xx:74LS04 U1
 U 4 1 692820BD
@@ -2460,19 +2459,6 @@ F 3 "~" H 17450 7800 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	14050 6300 14450 6300
-$Comp
-L Diode:1N4001 D?
-U 1 1 6998E6A9
-P 16800 5700
-AR Path="/6921BBA5/6998E6A9" Ref="D?"  Part="1" 
-AR Path="/6998E6A9" Ref="D3"  Part="1" 
-F 0 "D3" H 16800 5917 50  0000 C CNN
-F 1 "1S4" H 16800 5826 50  0000 C CNN
-F 2 "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal" H 16800 5525 50  0001 C CNN
-F 3 "http://www.vishay.com/docs/88503/1n4001.pdf" H 16800 5700 50  0001 C CNN
-	1    16800 5700
-	-1   0    0    -1  
-$EndComp
 Wire Wire Line
 	15050 5700 14750 5700
 Wire Wire Line
@@ -2522,4 +2508,17 @@ Wire Wire Line
 	4600 15700 4600 15050
 Connection ~ 4600 15700
 Connection ~ 4600 15050
+$Comp
+L Diode:1N4001 D?
+U 1 1 6998E6A9
+P 16800 5700
+AR Path="/6921BBA5/6998E6A9" Ref="D?"  Part="1" 
+AR Path="/6998E6A9" Ref="D3"  Part="1" 
+F 0 "D3" H 16800 5917 50  0000 C CNN
+F 1 "1S4" H 16800 5826 50  0000 C CNN
+F 2 "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal" H 16800 5525 50  0001 C CNN
+F 3 "http://www.vishay.com/docs/88503/1n4001.pdf" H 16800 5700 50  0001 C CNN
+	1    16800 5700
+	-1   0    0    -1  
+$EndComp
 $EndSCHEMATC
